@@ -1,10 +1,7 @@
-name: CI and Deploy
+name: CI/CD
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -13,36 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '14'
 
-      - run: npm install
+      - name: Install dependencies
+        run: npm install
 
-      - run: npm test
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Install dependencies and build
-        run: |
-          npm install
-          npm run build
+      - name: Build
+        run: npm run build
 
       - name: Deploy to GitHub Pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cp -r $GITHUB_WORKSPACE/dist/* .
-          git add .
-          git commit -m "Deploy to GitHub Pages"
-          git push --force --quiet origin main
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: gitworks
+          FOLDER: build
