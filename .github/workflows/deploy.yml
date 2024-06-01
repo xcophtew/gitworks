@@ -38,11 +38,6 @@ jobs:
           npm install
           npm run build
 
-      - name: Create gh-pages branch
-        run: |
-          git checkout -b gh-pages
-          git push --set-upstream origin gh-pages
-
       - name: Deploy to GitHub Pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,4 +45,4 @@ jobs:
           cp -r $GITHUB_WORKSPACE/dist/* .
           git add .
           git commit -m "Deploy to GitHub Pages"
-          git push --force --quiet origin gh-pages
+          git push --force --quiet origin main
